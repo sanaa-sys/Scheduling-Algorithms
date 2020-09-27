@@ -150,110 +150,166 @@ void sort(pcb_t processes[],int number)
 
 }
 
-void rr(pcb_t processes[],int number)
+void rr(proc_data_t processes[],int number)
 {	
 	char *color1 = "black";//background color of interface
 	char *color2 = "blue";//foreground color of interface
 	initInterface(color1,color2);//initialising the interface for output
- 	int Time=processes[0].entryTime;
- 	int Total_time = 0;//variable with total time
- 	int quantum = 2;
- 	int slice = quantum;
- 	insert(processes[0]);//adding first process to queue
- 	int wait[number];//waiting time of processes
- 	int turn[number];//turnaround time of processes
- 	pcb_t item;//object of pcb class
-
- 	//insert(dumm);
- 	//insert(processes[0]);
- 	
- 	
+ 	if (sizeof(proc_data_t) == 0)
+    	{
+        return 0;
+    	} 
+	char okay[100]= "That's alright";
+	int totalTime = 0;
+	proc_data_t current_process;
+	   // Appending the row as given order in the file of the process name
+   for(int i = 0; i < number_of_process-1; i++){
+       appendRow(process_array[i].processName);
+    
+    }
  
-	
- 	for(int i=0;i<number;i++)
- 	{
- 		Total_time += processes[i].serviceTime;//adding service times to total time
- 		int rowIndex=appendRow(processes[i].process_name); //add row for each process
-		appendBlank(rowIndex,processes[i].entryTime);//add blank space from 0 until entry time
- 	}
-		while(Total_time != 0 && Time < 10)//while loop condition
-		 
-		 	{   //printf(" slice: %d</n>",slice); 
-		 	    //printf("Item in queue: %d", count);
-		 		if(!isEmpty() && slice ==  quantum){
-		 			item = removeData();//executing first process from queue
-		 			//printf("item poped: %s</n>", item.process_name);
-		 		}
-		 		else{
-		 			//item = dummy;
-		 		}
-		 		printf("item process Name: %s</n>", item.process_name);
-			
-		 		if(item.remainingTime == 1)//if remainingtime < qunatum run process for 1 sec
-		 		{
-		 			  
-		 				printf("%s</n>",item.process_name);
-		 				
-		 				printf("%s</n>","EXIT");
-		 				sleep(item.remainingTime);//execute process for 1 sec
-		 				slice ==  quantum;//reset slice value
-		 				item.remainingTime = 0;//setting remaining time of process to 0
-		 				item.state = EXIT;//setting to exit state
-		 				processes[item.index] = item;//update value of processes array in index with item
-		 				//printf(" %d</n>", )
-		 				printf("Total Time: %d</n>", Total_time);
-		 				removeData();//remobe item from queue
-		 				Total_time -= item.remainingTime;
-		 				
-		 		}
-		 	   if(item.remainingTime >= 1)//if remainingtime >= 1  the process executes till quantum
-		 	   {   
-		 			
-		 			printf("%s",item.process_name);
-		 			printf("%s</n>","RUNNING");
-		 			sleep(1);//
-		 			item.state = RUNNING;
-		 			processes[item.index] = item;
-		 			slice--;
-		 			item.remainingTime -= 1;//decrementing remaining time with 1
-		 			Total_time -= item.remainingTime;
-		 		 		
-		 		 	
-		 	  }
-		 	  
-		 	  for(int i=0;i<number;i++)
- 			  {	
-				
-					if(Time == processes[i].entryTime && strcmp(processes[i].process_name, item.process_name) != 0)//checking arrival of other processes
-					{
-						processes[i].state = READY;//setting it in READY state
-						//printf(" %s",processes[i].process_name);
-						printf("item inserted: %s",processes[i].process_name);
-						printf("  %s</n>","ARRIVED");
-						insert(processes[i]);//inserting it to queue
-						
-					}
-			   }	
-		 	  if(slice == 0 && item.state == RUNNING){//if quantum has ended and process is still running
-		 	  		insert(item);//insert item at queue so that it can be executed again
-		 	  		slice = quantum;//assign slice to quuantum
-		 	  }
-		  //printf("Time: %d</n>", Time); 
-	      Time++;
-	      //printf("process: %s  %d", processes[number-1].process_name, processes[number-1].state);
-	      if(processes[number-1].state == EXIT){
-	    	//if last process has executed break loop
-	      		break;
-	      
-	      }
-	   
-		    
-				
-	   
-		 		
-		 	}
-	
-		
-		waitExit();
+   // General Sorting Funciton to sort it according to there entry time 
+   sort(array, number_of_process-1);
+   // calculating the totaltime and storing the remaining time in the process
+   for(int i=0 ; i< number_of_process-1; i++){
+        totalTime = totalTime + array[i].serviceTime;
+        array[i].remaningTime = array[i].serviceTime;
+        array[i].state = BLANK;
+        array[i].sort_index = i;
+        //array[i].finishTime = 0;
+   
+   }
+   // intial process should be in ready state and printing for the arrival
+   array[0].state = READY;
+   printf("  %s entered the system at %d</n>",array[0].processName, array[0].entryTime);
+   
+  // first item in the queue state
+   push(array[0]);
+   // updated one
+   appendBlank(array[0].index,array[0].entryTime); 
+   // time starts at zero
+   // updated one 
+   int time = array[0].entryTime;
+   // time_bar for the display
+   int quantum = 2;
+   int count = 0;
+   while(totalTime != 0){
+        // Checking for the size of the queue and for the newly entered for the quantum count 
+        if(size() > 0 && count == 0){
+             current_process = pop();
+             current_process.state = RUNNING;
+             if (count == 0){
+                 printf("  %s is in running state (for the given quantun)</n>",current_process.processName);
+             }
+        } 
+        else{   
+                current_process.state = DEADEND;
+               
+        }
+       
+        
+       // printf(" %d</n>", totalTime);
+       // printf("total Time: %d</n>", totalTime);
+       // Putting the current process into the Running state
+        if (current_process.remaningTime == 1){
+                // totalTime deduction from the current Time
+                totalTime = totalTime - current_process.remaningTime;
+               // time_bar = current_process.remaningTime;
+                appendBar(current_process.index,current_process.remaningTime, colour2, current_process.processName, 0);
+                current_process.remaningTime = 0;
+                current_process.turnAroundTime = array[current_process.sort_index].waitingTime + current_process.serviceTime; 
+                
+                // updating the state of the process into the EXIT status
+                current_process.state = EXIT;
+               // printf("process_EXIT: %s Process State: %d</n>", current_process.processName,current_process.state);
+                //current_process.finishTime = time;
+                  //printf("waitingTime in the exit state: %d</n>",   array[current_process.sort_index].waitingTime);
+                  printf("Process Name: %s Completed. Turnaround time: %d seconds  Total wait time: %d seconds </n>", current_process.processName, current_process.turnAroundTime, array[current_process.sort_index].waitingTime);
+                array[current_process.sort_index] = current_process;
+              
+                // making the quatum count equals to zero
+                count = 0;
+              
+               // slice = true;
+                
+        }
+        // Running status for the process
+        else if(current_process.remaningTime > 1){
+             appendBar(current_process.index, 1, colour2, current_process.processName, 0);
+             current_process.state = RUNNING;
+             current_process.remaningTime = current_process.remaningTime - 1;
+            // printf("Process Name: %s in the runnnig state</n>", current_process.processName);
+             // total time deduction by the 1 secs
+             totalTime = totalTime - 1;
+             //time_bar = 1;
+               count++;
+             array[current_process.sort_index] = current_process;
+           
+          
+        }
+      
+        // Checking for the next process, to update the status
+        for(int k = 0; k < number_of_process-1; k++){
+                      // Checking the entry time for the rest left process
+                  if(array[k].entryTime ==  time && array[k].state == BLANK){ 
+                             printf("%s entered the system in %d seconds</n>", array[k].processName, array[k].entryTime);
+                             // Appending the blank till the EntryTime
+                             appendBlank(array[k].index,time);  // Here index refers th
+                             // Updating the status of the Proacess with the READY STATUS
+                             array[k].state = READY;
+                             // if next queue is nothing so next one should be first entry one
+                             
+                             push(array[k]);
+                  }
+                         
+                    
+                  if (array[k].state == READY && current_process.state != DEADEND){
+                       // If the left process is in the READY status then another dotted bar should be displayed on the display according to the row
+                       appendBar(array[k].index,1, colour2, array[k].processName, 1);
+                       // Adding the waiting time for that particular process
+                     
+                       
+                     
+                  }
+                   
+                      
+          }
+         // printf("size(): %d</n>", size());
+         // Updating the waiting time in the for queued item by one 
+          for(int l = front; l < size()+front; l++){
+                // if it is in the system then add in the queue only
+                
+               queue[l].waitingTime++;
+                // update it in as well as in the array
+              array[queue[l].sort_index].waitingTime++;
+               // printf("processName: %s waitingTime: %d</n>", array[queue[l].sort_index].processName,  array[queue[l].sort_index].waitingTime);
+              
+          }
+              
+            
+          // checking for the running state and time quatum to select another process
+          if (current_process.state == RUNNING && count == quantum){
+                   //printf("ready state to check the queue push process: %s Process State: %d</n>", current_process.processName,current_process.state);
+              // putting back into the READY state
+              current_process.state = READY;
+             
+             // updating the array with the current_process changes 
+              array[current_process.sort_index] = current_process;
+             // pushing back into the queue
+              push(current_process);
+             // array[current_process.sort_index].waitingTime++;
+              // quantum initialzing becomes zero
+              count = 0;
+           }
+           
+          // time counter increases
+          time ++;
+          // sleep for a second
+          sleep(1);
+    
+   	}
+   
+	// display feature to wait
+	waitExit();
 	}
 	
