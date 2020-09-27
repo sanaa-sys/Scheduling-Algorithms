@@ -2,7 +2,9 @@
 
 
 
-Created programs to simulate two diﬀerent scheduling algorithms i.e. First come, first served and Preemptive Round Robin scheduling
+Created programs to simulate two diﬀerent scheduling algorithms i.e. First come, first served and Preemptive Round Robin scheduling.
+
+https://github.com/sanaa-sys/Scheduling-Algorithms/blob/master/scheduler_pic.png
 
 Instructions
 
