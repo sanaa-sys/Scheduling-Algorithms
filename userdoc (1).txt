@@ -1,0 +1,48 @@
+PURPOSE
+The purpose of these 2 programs is to stimulate First Come First Serve and Round Robin scheduling algorithms using iOL markup services
+HOW TO USE
+First download the following files-
+create-data.c
+process-visualiser.h
+process-visualiser.c
+non-preempt-29587778.c
+preempt-29587778.c
+In the command prompt change the directory using cd command to be that of these files.
+Then follow the below steps
+Creating file containing process data-
+You can input process data in any txt file using FIT2100 process data utility.(Remember to click Save to save process data in file)
+To access it type the following commands in the command prompt-
+gcc create-data.c
+iol -- ./a.out
+The process data will be displayed in the file in the below format-
+process name   arrival time   service time
+Accessing FCFS simulation-
+To access it type the following commands in the command prompt-
+gcc non-preempt-29587778.c process-visualiser.c process-visualiser.h
+If you want process data to be accessed from a file any other process-data.txt, type the following command-
+iol -- ./a.out filename
+otherwise type-
+iol -- ./a.out
+To exit from the simulation, click on the Exit button
+Accessing Round Robin simulation-
+To access it type the following commands in the command prompt-
+gcc non-preempt-29587778.c process-visualiser.c process-visualiser.h
+If you want process data to be accessed from a file any other process-data.txt, type the following command-
+iol -- ./a.out filename
+otherwise type-
+iol -- ./a.out
+To exit from the simulation, click on the Exit button
+ASSUMPTIONS
+Only 10 processes can be accomodated
+The process name can have max 10 characters
+The first process in both the algorithms will be in READY state be default
+POSSIBLE ERRORS
+Please note the order of arguments are not flexible.
+All these files need to be in the same directory
+The directory in Command Prompt should be the same as these files
+AUTHOR
+Ayesha Ali-29587778
+LAST MODIFIED
+10/09/2019
+
+
